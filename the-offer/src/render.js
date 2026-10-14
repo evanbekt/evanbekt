@@ -629,7 +629,7 @@ function shotRoom(b, S, set, ov, P) {
       const size = (15 - 6 * u) * z;
       const ang = Math.atan2(2 * (M[1] - S0[1]) * u, M[0] - S0[0]);
       // dark coffee, each drop catching a cold glint from the phone
-      P.push(sx, sy, size, 1, [0.07, 0.05, 0.04], fade, -ang + Math.PI / 2, 0.7);
+      P.push(sx, sy, size, 1, [0.035, 0.04, 0.05], fade, -ang + Math.PI / 2, 0.7);   // cold: amber belongs to you alone
       P.push(sx - 2.5 * z, sy - 2 * z, size * 0.75, 0, [0.62, 0.70, 0.86], 0.55 * fade, 0.16, 0.25);
     }
     // splash
