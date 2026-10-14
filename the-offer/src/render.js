@@ -91,8 +91,8 @@ const L = PORTRAIT ? {
   },
   amber: [[28.5, -250, 412], [30.5, -150, 180], [32.5, 230, 120], [34, 300, 300], [36.5, -60, -120], [38.2, -330, -520], [41, -120, -330]],
   grid: { cx: 0, cy: -400, sp: 82, r: 8 },
-  gridMath: { cx: 0, cy: -470, sp: 70, r: 7 },
-  decline: [0, 330],
+  gridMath: { cx: 0, cy: -400, sp: 70, r: 7 },   // 9:16 keeps clear of the platform UI (top ~150 px, bottom ~380 px)
+  decline: [0, 190],
   textX: 90, textW: 900,
   clock: [0, -430, 330],
 } : {
@@ -669,7 +669,7 @@ function shotRoom(b, S, set, ov, P) {
   }
   // story
   if (!PORTRAIT) storyLine(ov, 'except', b, CX, 110, { align: 'center', italic: true, color: css(AMBER, 0.95), size: 60 });
-  else storyLine(ov, 'except', b, CX, 1730, { align: 'center', italic: true, color: css(AMBER, 0.95), size: 72 });
+  else storyLine(ov, 'except', b, CX, 1480, { align: 'center', italic: true, color: css(AMBER, 0.95), size: 72 });
   storyCatch(b, ov);
   S.grain = 0.032;
 }
@@ -792,7 +792,7 @@ function shotMath(b, S, set, ov, P) {
     const ca = smooth(ramp(b, 82, 82.6));
     const n = TL.acceptedCount(b);
     if (!PORTRAIT) counterBig(ov, D[0], CY - 30, n, ca, b, 1);
-    else counterBig(ov, CX, CY + 430, n, ca, b, 1);
+    else counterBig(ov, CX, CY + 300, n, ca, b, 1);
   }
   S.grain = 0.03;
 }
@@ -813,7 +813,7 @@ function banner(ctx, b, a, text) {
   ctx.save();
   ctx.globalAlpha = a;
   const w = PORTRAIT ? 760 : 640, h = 92;
-  const x = CX - w / 2, y = (PORTRAIT ? 120 : 64) + (1 - a) * -20;
+  const x = CX - w / 2, y = (PORTRAIT ? 190 : 64) + (1 - a) * -20;
   rrect(ctx, x, y, w, h, 28);
   ctx.fillStyle = 'rgba(30,37,50,0.92)'; ctx.fill();
   ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(190,210,245,0.16)'; ctx.stroke();
@@ -869,8 +869,8 @@ function shotClock(b, S, set, ov, P) {
   // counter + mini grid
   const n = TL.acceptedCount(b);
   const k = smooth(ramp(b, 96, 96.6));
-  const mg = PORTRAIT ? { cx: 150, cy: 760, sp: 17, r: 3.4 } : { cx: 690, cy: -330, sp: 17, r: 3.4 };
-  const lx = CX + (PORTRAIT ? -110 : 470), ly = CY + (PORTRAIT ? 700 : -360);
+  const mg = PORTRAIT ? { cx: 150, cy: 480, sp: 17, r: 3.4 } : { cx: 690, cy: -330, sp: 17, r: 3.4 };
+  const lx = CX + (PORTRAIT ? -110 : 470), ly = CY + (PORTRAIT ? 420 : -360);
   ov.save();
   ov.globalAlpha = k;
   ov.textAlign = 'left';

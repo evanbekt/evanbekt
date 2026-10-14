@@ -16,7 +16,7 @@ FRAMES = [  # (beat, scene, caption)
     (34, '02  The power', 'The world stops. You keep moving.'),
     (49.5, '03  The catch', 'Ninety-nine others.'),
     (72, '04  The math', 'Decline: someone stops the world. You never know.'),
-    (88, '04  The math', 'Accept: they light up, one per beat.'),
+    (88.5, '04  The math', 'Accept: they light up, one per beat.'),
     (112, '05  The realization', 'The second hand stutters. The count runs away.'),
     (122.5, '06  The question', 'A thumb over Accept.'),
     (126, '06  The question', 'Everything freezes but you.'),
@@ -67,7 +67,7 @@ y0 = head + rows * (fh + cap) + 60
 d.text((mx, y0), 'PALETTE', font=inter(18, 600), fill=DIM)
 pal = [((4, 5, 8), 'Room', '#040508', 'near-black'), ((22, 30, 48), 'Night', '#161E30', 'window, wall light'),
        ((184, 209, 255), 'Phone light', '#B8D1FF', 'the only light'), ((153, 219, 255), 'The others', '#99DBFF', 'ice-blue, 99 of them'),
-       ((255, 143, 43), 'You', '#FF8F2B', 'a dying amber, used once')]
+       ((255, 143, 43), 'You', '#FF8F2B', 'a dying amber, only for you')]
 for i, (c, name, hx, note) in enumerate(pal):
     x = mx + i * 300
     d.rectangle([x, y0 + 40, x + 260, y0 + 150], fill=c, outline=(40, 44, 56))
