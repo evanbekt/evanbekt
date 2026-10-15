@@ -2,6 +2,7 @@
 # Build every deliverable. Rendering is the slow part (about an hour per format on 4 cores).
 #   KATHLEEN=/path/to/en-us-kathleen-low.onnx tools/deliver.sh
 #   SKIP_RENDER=1 tools/deliver.sh       reuse out/video_*.mp4
+#   FORMATS="9x16 16x9" tools/deliver.sh  both formats (default: 9x16 only, the TikTok cut)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p out audio/stems
@@ -9,10 +10,12 @@ node tools/export-cues.mjs > audio/cues.json
 if [ -n "${KATHLEEN:-}" ]; then python3 audio/voice.py audio/cues.json "$KATHLEEN"; fi
 python3 audio/score.py audio/cues.json out/voice.wav out/score.wav
 if [ -z "${SKIP_RENDER:-}" ]; then
-  node tools/render.mjs --w 1920 --h 1080 --sub 8 --workers 4 --crf 17 --out out/video_16x9.mp4
-  node tools/render.mjs --w 1080 --h 1920 --sub 8 --workers 4 --crf 17 --out out/video_9x16.mp4
+  for f in ${FORMATS:-9x16}; do
+    if [ "$f" = 9x16 ]; then wh="--w 1080 --h 1920"; else wh="--w 1920 --h 1080"; fi
+    node tools/render.mjs $wh --sub 8 --workers 4 --crf 17 --out out/video_$f.mp4
+  done
 fi
-for f in 16x9 9x16; do
+for f in ${FORMATS:-9x16}; do
   ffmpeg -y -loglevel error -i out/video_$f.mp4 -i out/score.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 320k -ar 48000 -movflags +faststart -shortest out/ONE_NEW_VOICEMAIL_${f}_master.mp4
   # full 1080p60 HEVC under 30 MB (iPhone/Mac/modern Android), and H.264 under 30 MB (plays and uploads anywhere)
   ffmpeg -y -loglevel error -i out/ONE_NEW_VOICEMAIL_${f}_master.mp4 -c:v libx265 -preset medium -b:v 3550k -x265-params pass=1:stats=out/.x265_$f.log:log-level=error -an -f mp4 /dev/null
