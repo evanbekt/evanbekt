@@ -1,0 +1,205 @@
+{
+ "part": 5,
+ "bpm": 96,
+ "fps": 60,
+ "duration": 60,
+ "beat": 0.625,
+ "scenes": [
+  {
+   "id": 1,
+   "name": "call",
+   "b0": 0,
+   "b1": 24,
+   "t0": 0,
+   "t1": 15
+  },
+  {
+   "id": 2,
+   "name": "dial",
+   "b0": 24,
+   "b1": 36,
+   "t0": 15,
+   "t1": 22.5
+  },
+  {
+   "id": 3,
+   "name": "chat",
+   "b0": 36,
+   "b1": 46,
+   "t0": 22.5,
+   "t1": 28.75
+  },
+  {
+   "id": 4,
+   "name": "door",
+   "b0": 46,
+   "b1": 64,
+   "t0": 28.75,
+   "t1": 40
+  },
+  {
+   "id": 5,
+   "name": "clock",
+   "b0": 64,
+   "b1": 76,
+   "t0": 40,
+   "t1": 47.5
+  },
+  {
+   "id": 6,
+   "name": "call2",
+   "b0": 76,
+   "b1": 88,
+   "t0": 47.5,
+   "t1": 55
+  },
+  {
+   "id": 7,
+   "name": "title",
+   "b0": 88,
+   "b1": 95.5,
+   "t0": 55,
+   "t1": 59.6875
+  },
+  {
+   "id": 8,
+   "name": "black",
+   "b0": 95.5,
+   "b1": 96,
+   "t0": 59.6875,
+   "t1": 60
+  }
+ ],
+ "cuts": [
+  15,
+  22.5,
+  28.75,
+  40,
+  47.5,
+  55,
+  59.6875
+ ],
+ "voice": [
+  {
+   "id": "v1",
+   "b0": 10.5,
+   "fx": "you",
+   "speed": 1.25,
+   "text": "Pick up.",
+   "t0": 6.5625
+  },
+  {
+   "id": "v2",
+   "b0": 21,
+   "fx": "you",
+   "speed": 1.25,
+   "text": "I can hear you breathing.",
+   "t0": 13.125
+  },
+  {
+   "id": "o1",
+   "b0": 26,
+   "fx": "op",
+   "speed": 1.05,
+   "text": "Nine one one. What is your emergency?",
+   "caption": "911. What is your emergency?",
+   "t0": 16.25
+  },
+  {
+   "id": "o2",
+   "b0": 30.5,
+   "fx": "op",
+   "speed": 1.05,
+   "text": "We're getting the same call from every phone in your building.",
+   "caption": "We’re getting the same call from every phone in your building.",
+   "t0": 19.0625
+  },
+  {
+   "id": "v3",
+   "b0": 47,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "You don't have to open the door.",
+   "caption": "You don’t have to open the door.",
+   "t0": 29.375
+  },
+  {
+   "id": "v4",
+   "b0": 53,
+   "fx": "you",
+   "speed": 1.3,
+   "text": "Just answer.",
+   "t0": 33.125
+  },
+  {
+   "id": "v5",
+   "b0": 57,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "If you answer, one of us gets to come home.",
+   "t0": 35.625
+  },
+  {
+   "id": "v6",
+   "b0": 63,
+   "fx": "whisper",
+   "speed": 1.4,
+   "text": "Please.",
+   "t0": 39.375
+  },
+  {
+   "id": "v7",
+   "b0": 70,
+   "fx": "glitch",
+   "speed": 1.2,
+   "text": "Answer. Answer. Answer.",
+   "t0": 43.75
+  },
+  {
+   "id": "v8",
+   "b0": 84,
+   "fx": "whisper",
+   "speed": 1.4,
+   "text": "Thank you.",
+   "t0": 52.5
+  }
+ ],
+ "events": {
+  "rings": [
+   [
+    0.625,
+    5.9375
+   ],
+   [
+    7.8125,
+    12.5
+   ],
+   [
+    47.8125,
+    50.3125
+   ]
+  ],
+  "missed": [
+   5.9375,
+   12.5
+  ],
+  "dial": 15.3125,
+  "answered": 50.3125,
+  "title": 55,
+  "silence": 59.6875
+ },
+ "chat": [
+  -12.5,
+  -12.49375,
+  -12.4875,
+  -12.48125,
+  -12.475,
+  -12.46875,
+  -12.4625,
+  23.125,
+  24.375,
+  25.9375,
+  27.1875
+ ],
+ "flicker": []
+}

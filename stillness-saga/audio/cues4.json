@@ -1,0 +1,198 @@
+{
+ "part": 4,
+ "bpm": 96,
+ "fps": 60,
+ "duration": 60,
+ "beat": 0.625,
+ "scenes": [
+  {
+   "id": 1,
+   "name": "lock",
+   "b0": 0,
+   "b1": 8,
+   "t0": 0,
+   "t1": 5
+  },
+  {
+   "id": 2,
+   "name": "chat",
+   "b0": 8,
+   "b1": 24,
+   "t0": 5,
+   "t1": 15
+  },
+  {
+   "id": 3,
+   "name": "wave",
+   "b0": 24,
+   "b1": 46,
+   "t0": 15,
+   "t1": 28.75
+  },
+  {
+   "id": 4,
+   "name": "chorus",
+   "b0": 46,
+   "b1": 58.5,
+   "t0": 28.75,
+   "t1": 36.5625
+  },
+  {
+   "id": 5,
+   "name": "peep",
+   "b0": 58.5,
+   "b1": 85,
+   "t0": 36.5625,
+   "t1": 53.125
+  },
+  {
+   "id": 6,
+   "name": "knock",
+   "b0": 85,
+   "b1": 89.5,
+   "t0": 53.125,
+   "t1": 55.9375
+  },
+  {
+   "id": 7,
+   "name": "title",
+   "b0": 89.5,
+   "b1": 95.5,
+   "t0": 55.9375,
+   "t1": 59.6875
+  },
+  {
+   "id": 8,
+   "name": "black",
+   "b0": 95.5,
+   "b1": 96,
+   "t0": 59.6875,
+   "t1": 60
+  }
+ ],
+ "cuts": [
+  5,
+  15,
+  28.75,
+  36.5625,
+  53.125,
+  55.9375,
+  59.6875
+ ],
+ "voice": [
+  {
+   "id": "sys",
+   "b0": 4,
+   "fx": "sys",
+   "speed": 1,
+   "text": "You have ninety-nine new messages.",
+   "caption": "You have 99 new messages.",
+   "t0": 2.5
+  },
+  {
+   "id": "v1",
+   "b0": 25,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "Hi. It's me. Again.",
+   "caption": "Hi. It’s me. Again.",
+   "t0": 15.625
+  },
+  {
+   "id": "v2",
+   "b0": 29,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "I've called you ninety-nine times.",
+   "caption": "I’ve called you 99 times.",
+   "t0": 18.125
+  },
+  {
+   "id": "v3",
+   "b0": 34,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "Every night I tell you not to open the door.",
+   "t0": 21.25
+  },
+  {
+   "id": "v4",
+   "b0": 41,
+   "fx": "glitch",
+   "speed": 1.3,
+   "text": "Every night, you open it.",
+   "t0": 25.625
+  },
+  {
+   "id": "c1",
+   "b0": 66,
+   "fx": "child",
+   "speed": 1.3,
+   "text": "Mommy? Can I come in?",
+   "t0": 41.25
+  },
+  {
+   "id": "v6",
+   "b0": 76,
+   "fx": "whisper",
+   "speed": 1.4,
+   "text": "There's room for one more out here.",
+   "caption": "There’s room for one more out here.",
+   "t0": 47.5
+  }
+ ],
+ "events": {
+  "notify": [
+   0.9375,
+   1.875
+  ],
+  "tapPlay": 14.6875,
+  "playAll": 28.4375,
+  "chorus": [
+   28.75,
+   36.5625
+  ],
+  "knocks": 53.125,
+  "title": 55.9375,
+  "silence": 59.6875
+ },
+ "chat": [
+  5.9375,
+  7.1875,
+  8.4375,
+  9.6875,
+  10.9375,
+  12.1875,
+  13.4375
+ ],
+ "flicker": [
+  [
+   38.4375,
+   38.6875
+  ],
+  [
+   40.375,
+   40.75
+  ],
+  [
+   42.75,
+   43.25
+  ],
+  [
+   44.6875,
+   45.25
+  ],
+  [
+   46.625,
+   47.125
+  ],
+  [
+   49.5,
+   50.25
+  ],
+  [
+   51.625,
+   53.125
+  ]
+ ]
+}
