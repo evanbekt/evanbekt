@@ -1,0 +1,214 @@
+{
+ "bpm": 96,
+ "fps": 60,
+ "duration": 60,
+ "beat": 0.625,
+ "scenes": [
+  {
+   "id": 1,
+   "name": "the notification",
+   "b0": 0,
+   "b1": 16,
+   "t0": 0,
+   "t1": 10
+  },
+  {
+   "id": 2,
+   "name": "the message",
+   "b0": 16,
+   "b1": 32,
+   "t0": 10,
+   "t1": 20
+  },
+  {
+   "id": 3,
+   "name": "the door",
+   "b0": 32,
+   "b1": 52,
+   "t0": 20,
+   "t1": 32.5
+  },
+  {
+   "id": 4,
+   "name": "the peephole",
+   "b0": 52,
+   "b1": 76,
+   "t0": 32.5,
+   "t1": 47.5
+  },
+  {
+   "id": 5,
+   "name": "the knock",
+   "b0": 76,
+   "b1": 86,
+   "t0": 47.5,
+   "t1": 53.75
+  },
+  {
+   "id": 6,
+   "name": "the recording",
+   "b0": 86,
+   "b1": 96,
+   "t0": 53.75,
+   "t1": 60
+  }
+ ],
+ "cuts": [
+  10,
+  20,
+  32.5,
+  47.5,
+  53.75,
+  56.875,
+  59.375
+ ],
+ "voice": [
+  {
+   "id": "sys",
+   "b0": 9.5,
+   "fx": "sys",
+   "speed": 1,
+   "text": "First new message. Received tomorrow, at three fourteen A.M.",
+   "caption": "First new message. Received tomorrow, at 3:14 a.m.",
+   "t0": 5.9375
+  },
+  {
+   "id": "l1",
+   "b0": 18,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "Hi. It's me.",
+   "t0": 11.25
+  },
+  {
+   "id": "l2",
+   "b0": 21,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "I'm calling you from tomorrow night.",
+   "t0": 13.125
+  },
+  {
+   "id": "l3",
+   "b0": 26,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "Don't be scared. It's very quiet here.",
+   "t0": 16.25
+  },
+  {
+   "id": "l4",
+   "b0": 33.5,
+   "fx": "you",
+   "speed": 1.2,
+   "text": "At three fourteen, you'll hear someone in the hallway.",
+   "caption": "At 3:14, you’ll hear someone in the hallway.",
+   "t0": 20.9375
+  },
+  {
+   "id": "l5",
+   "b0": 45,
+   "fx": "you",
+   "speed": 1.25,
+   "text": "Don't open the door.",
+   "t0": 28.125
+  },
+  {
+   "id": "l6",
+   "b0": 53.5,
+   "fx": "you",
+   "speed": 1.25,
+   "text": "I opened the door.",
+   "t0": 33.4375
+  },
+  {
+   "id": "l7",
+   "b0": 60,
+   "fx": "glitch",
+   "speed": 1.3,
+   "text": "I'm still standing here.",
+   "t0": 37.5
+  },
+  {
+   "id": "l8",
+   "b0": 66,
+   "fx": "you",
+   "speed": 1.25,
+   "text": "I've been standing here for a very long time.",
+   "t0": 41.25
+  },
+  {
+   "id": "l9",
+   "b0": 81,
+   "fx": "whisper",
+   "speed": 1.4,
+   "text": "Please. Let me in.",
+   "t0": 50.625
+  }
+ ],
+ "events": {
+  "screenOn": 1.875,
+  "notify": 2.1875,
+  "play": 5.3125,
+  "beep": 10.15625,
+  "minute": 25,
+  "feet": 26.25,
+  "flash": 38.4375,
+  "knocks": [
+   48.125,
+   48.75,
+   49.375
+  ],
+  "title": 53.75,
+  "record": 56.875,
+  "breath": 58.4375,
+  "black": 59.375,
+  "silence": 59.375
+ },
+ "flicker": [
+  [
+   35,
+   35.075
+  ],
+  [
+   35.1875,
+   35.2375
+  ],
+  [
+   36.8125,
+   36.90625
+  ],
+  [
+   38.4375,
+   38.96875
+  ],
+  [
+   40.125,
+   40.1875
+  ],
+  [
+   40.28125,
+   40.375
+  ],
+  [
+   42.375,
+   42.5
+  ],
+  [
+   43.6875,
+   43.9375
+  ],
+  [
+   44.8125,
+   44.875
+  ],
+  [
+   45.5625,
+   45.875
+  ],
+  [
+   46.625,
+   47
+  ]
+ ]
+}
