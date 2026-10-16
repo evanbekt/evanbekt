@@ -1,0 +1,550 @@
+<meta charset="utf-8">
+<title>Building 3</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Instrument+Serif:ital@0;1&family=Rock+Salt&family=Caveat:wght@500&display=swap">
+<style>
+/* One night, one screen: a stage like a phone held upright. HUD on top, the scene, the words, then what you can do. */
+:root {
+  --night: #0a0b0e; --wall: #14161b; --edge: #23262e;
+  --paper: #ece4d2; --text: #e6e1d6; --dim: #8d919b;
+  --amber: #ff9a3d; --ice: #9fd6ff; --red: #c0342f; --hall: #cfe8c8;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --mono: "Courier Prime", "Courier New", ui-monospace, monospace;
+  --hand: "Rock Salt", "Segoe Print", cursive;
+  --neat: "Caveat", "Segoe Script", cursive;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--night); color: var(--text); font-family: var(--mono); margin: 0;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0;
+  display: flex; justify-content: center; overflow: hidden; }
+#stage { position: relative; width: 100%; max-width: 460px; height: 100%; display: flex; flex-direction: column; gap: 10px; padding-block: 12px; box-sizing: border-box; }
+#hud { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; letter-spacing: .08em; color: var(--dim); text-transform: uppercase; }
+#clock { font-family: var(--mono); font-weight: 700; font-size: 22px; color: var(--amber); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+#scene { position: relative; flex: 1 1 auto; min-height: 0; border-radius: 6px; overflow: hidden; background: #000; }
+#cv { width: 100%; height: 100%; display: block; cursor: pointer; }
+#words { min-height: 4.6em; font-family: var(--serif); font-size: 21px; line-height: 1.3; text-wrap: balance; }
+#words .say { display: block; font-family: var(--mono); font-size: 14px; color: var(--ice); margin-top: 4px; }
+#words .say.them { color: var(--red); }
+#actions { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font-family: var(--mono); font-size: 14px; color: var(--text); background: var(--wall); border: 1px solid var(--edge);
+  border-radius: 4px; padding: 10px 12px; cursor: pointer; min-height: 42px; }
+button:hover { border-color: var(--dim); }
+button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+button.danger { border-color: #4a2224; color: #f0c9c6; }
+button.safe { border-color: #29404c; color: var(--ice); }
+button .cost { color: var(--dim); font-size: 12px; margin-left: 6px; }
+/* panels that slide over the scene */
+[hidden] { display: none !important; }
+.panel { position: absolute; inset: 0; overflow-y: auto; padding: 18px; box-sizing: border-box; }
+#phone { background: linear-gradient(#1b2433, #0c1018); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+#phone h2 { font-size: 13px; letter-spacing: .25em; color: var(--dim); font-weight: 600; margin: 4px 0 14px; text-transform: uppercase; }
+.apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.app { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: 14px; padding: 14px; text-align: left; font-family: inherit; }
+.app b { display: block; font-size: 15px; } .app small { color: var(--dim); font-size: 12px; }
+.badge { display: inline-block; background: var(--red); color: #fff; border-radius: 10px; font-size: 11px; padding: 1px 7px; margin-left: 6px; }
+.msg { background: rgba(255,255,255,.07); border-radius: 14px; padding: 9px 12px; margin: 0 0 8px; max-width: 88%; font-size: 14px; }
+.msg i { display: block; font-style: normal; font-size: 11px; color: var(--ice); margin-bottom: 2px; }
+.msg.lily i { color: #ffc38a; } .msg.sys { background: none; color: var(--dim); font-style: italic; text-align: center; max-width: none; }
+.vm { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: 14px; }
+.vm small { color: var(--dim); display: block; font-size: 12px; }
+.terms { font-family: var(--mono); font-size: 13px; line-height: 1.5; color: #c9d2e2; background: rgba(0,0,0,.25); padding: 12px; border-radius: 8px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+#contract { background: var(--paper); color: #1d1b22; font-family: var(--mono); }
+#contract h3 { font-size: 15px; letter-spacing: .2em; margin: 0 0 4px; }
+#contract .cl { margin: 18px 0; font-size: 14px; line-height: 1.55; }
+#contract .cl b { display: block; letter-spacing: .08em; }
+#contract em { color: #a01d22; font-style: normal; font-weight: 700; }
+#contract .sigline { border-top: 2px solid #1d1b22; margin-top: 28px; padding-top: 6px; font-size: 11px; letter-spacing: .1em; display: flex; justify-content: space-between; }
+#contract button { color: #1d1b22; background: #ddd3bd; border-color: #b7ad97; }
+#contract button.danger { color: #8a1418; border-color: #c08a86; }
+#inkbehind { position: sticky; top: 0; width: 100%; height: 0; pointer-events: none; }
+#photo { background: rgba(4,4,6,.86); display: flex; align-items: center; justify-content: safe center; flex-direction: column; gap: 14px; }
+.polaroid { background: #f1ebdc; padding: 12px 12px 8px; width: min(78%, 320px, 38vh); flex: none; box-shadow: 0 18px 40px rgba(0,0,0,.6); transform: rotate(-2deg); }
+.polaroid canvas { width: 100%; height: auto; aspect-ratio: 1; display: block; }
+.polaroid p { font-family: var(--hand); color: #24222c; font-size: 16px; line-height: 1.5; margin: 8px 0 2px; text-align: center; min-height: 1.4em; }
+.polaroid p.neat { font-family: var(--neat); color: #2c4c8c; font-size: 25px; }
+#end { background: var(--night); display: flex; flex-direction: column; justify-content: center; gap: 14px; text-align: center; }
+#end h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(38px, 11vw, 56px); margin: 0; letter-spacing: .04em; text-wrap: balance; }
+#end p { font-family: var(--serif); font-size: 20px; line-height: 1.35; margin: 0 auto; max-width: 30ch; text-wrap: balance; }
+#end .small { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; color: var(--dim); text-transform: uppercase; }
+.found { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; font-size: 11px; color: var(--dim); }
+.found span { border: 1px solid var(--edge); border-radius: 3px; padding: 6px 2px; }
+.found span.got { color: var(--text); border-color: var(--amber); }
+#title { background: var(--night); display: flex; flex-direction: column; justify-content: center; gap: 18px; text-align: center; }
+#title h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(54px, 16vw, 84px); margin: 0; line-height: .95; }
+#title p { font-family: var(--serif); font-size: 19px; color: var(--dim); margin: 0 auto; max-width: 28ch; line-height: 1.35; }
+#title .start { align-self: center; font-size: 16px; padding: 14px 26px; border-color: var(--amber); color: var(--amber); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div id="stage">
+  <div id="hud"><span id="clock">3:07 AM</span><span id="film">film 3</span><span>sunrise 6:41</span></div>
+  <div id="scene">
+    <canvas id="cv" width="900" height="1100" aria-label="The scene"></canvas>
+    <div id="phone" class="panel" hidden></div>
+    <div id="contract" class="panel" hidden></div>
+    <div id="photo" class="panel" hidden></div>
+    <div id="end" class="panel" hidden></div>
+    <div id="title" class="panel">
+      <div class="small" style="font-size:12px;letter-spacing:.3em;color:var(--dim)">APARTMENT 307</div>
+      <h1>Building 3</h1>
+      <p>It is 3:07 AM. Something will knock. Survive until sunrise at 6:41.</p>
+      <button class="start" id="startBtn">Wake up</button>
+      <p style="font-size:14px">Sound on. Headphones help.</p>
+      <div class="found" id="foundTitle"></div>
+    </div>
+  </div>
+  <div id="words" aria-live="polite"></div>
+  <div id="actions"></div>
+</div>
+
+<script>
+// ------------------------------------------------------------------ world
+const START = 3 * 60 + 7, SUNRISE = 6 * 60 + 41, NIGHT = SUNRISE - START;   // minutes
+const ENDINGS = {
+  sunrise:  ['Sunrise', 'The light under the door turns gold. The knocking stopped a while ago. You didn’t answer anything, and nothing got in.'],
+  visiting: ['Visiting Hours', 'Elise comes back at nine with flowers and her mother’s Polaroid. “She lived in 307. She has my eyes.” Some things in Building 3 are real.'],
+  holder:   ['The Holder', 'The world stops. It is quiet, for a while. Then there is a knock, and it is you, and you are very tired of standing in the hall.'],
+  outside:  ['Outside', 'The hallway is empty when you step out. The door closes behind you. You knock. Somebody inside looks through the peephole and does not open.'],
+  answered: ['Answered', 'The line is open. You hear your own breathing, a beat late. “Thank you,” it says, in your voice. One of you gets to go home.'],
+  heard:    ['They Heard You', '“Who is it?” you asked. It liked the sound of your voice. Now it has it.'],
+  signed:   ['Countersigned', 'Your name dries red at 3:07 AM. There is a seventh clause now, and it is yours.'],
+  silent:   ['Silent Acceptance', 'You read to the end and said nothing. At sunrise, the phone lights up: Terms accepted. See you at 3:07.'],
+};
+const CHAT = [
+  [23, 'Marta', '309', 'is anyone else’s phone going off'],
+  [26, 'Dev', '312', 'voicemail from my own number??'],
+  [30, 'Mr. Haas', '304', 'Nobody open your doors.'],
+  [41, 'Mr. Haas', '304', 'There is an envelope under every door. Don’t read the whole thing.'],
+  [55, 'Lily', '311', 'mom is knocking'],
+  [57, 'Lily', '311', 'but mom is asleep in her bed'],
+  [66, 'Marta', '309', 'someone at my door says they’re me'],
+  [90, 'Mr. Haas', '304', 'If you read it to the end, decline in the app. Before sunrise.'],
+  [105, 'Dev', '312', 'a girl in a yellow coat keeps asking for her mom'],
+  [112, 'Mr. Haas', '304', 'The camera doesn’t lie. Ink isn’t people.'],
+  [124, 'Mr. Haas', '304', '5:15. It will call. Let it ring. Don’t touch it.'],
+  [160, 'Marta', '309', 'I answered.'],
+  [163, null, null, 'Marta left the group'],
+  [200, 'Dev', '312', 'is it sunrise yet'],
+];
+// visitors: [from, to, who, voice, line]
+const VISITORS = [
+  [7, 24, 'you', 'letmein', 'Please. Let me in.'],
+  [63, 85, 'marta', 'openmarta', 'Open up, Marta. It’s you.'],
+  [97, 118, 'elise', 'momitsme', 'Mom? It’s me. Open the door.'],
+  [153, 172, 'lily', 'mommy', 'Mommy? Can I come in?'],
+  [193, 214, 'ink', 'seeyou', 'See you at three oh seven.'],
+];
+const TRUTH = {     // what the Polaroid shows
+  you:   ['YOU.', 'figure'], marta: ['NOT MARTA', 'ink-mouth'], elise: ['ELISE?', 'elise'],
+  lily:  ['NOT LILY', 'ink-mother'], ink: ['IT HAS EYES', 'ink-eyes'], none: ['NOBODY', 'empty'],
+};
+const CALL = [128, 136];
+let S;
+function fresh() {
+  return { t: 0, film: 3, read6: false, declined: false, radiator: false, helped: false, envelope: 'none',
+    chatSeen: 0, vms: [], vmSeen: 0, knocked: {}, lastKnock: -99, view: 'room', said: [], callRung: false, ending: null, notes: 0 };
+}
+function load() { try { return JSON.parse(localStorage.getItem('b3-endings') || '[]'); } catch (e) { return []; } }
+function save(list) { try { localStorage.setItem('b3-endings', JSON.stringify(list)); } catch (e) { /* private window */ } }
+
+// ------------------------------------------------------------------ sound
+let AC = null, master = null, droneG = null;
+const CLIPS = {};
+function audioStart() {
+  if (AC) return;
+  try {
+    AC = new (window.AudioContext || window.webkitAudioContext)();
+    master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
+    // the room: a low drone and air
+    droneG = AC.createGain(); droneG.gain.value = 0.0; droneG.connect(master);
+    [36.7, 55.1, 73.6].forEach((f, i) => { const o = AC.createOscillator(); o.type = i ? 'sine' : 'triangle'; o.frequency.value = f * (1 + i * 0.002); const g = AC.createGain(); g.gain.value = [0.5, 0.18, 0.08][i]; o.connect(g).connect(droneG); o.start(); });
+    const n = noiseBuf(4), src = AC.createBufferSource(); src.buffer = n; src.loop = true;
+    const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 500; const ng = AC.createGain(); ng.gain.value = 0.05;
+    src.connect(lp).connect(ng).connect(droneG); src.start();
+    droneG.gain.linearRampToValueAtTime(0.35, AC.currentTime + 3);
+    ['hi', 'dontopen', 'opened', 'letmein', 'momitsme', 'byemom', 'mommy', 'openmarta', 'seeyou', 'ninety9', 'onemore', 'thankyou', 'pickup', 'operator', 'clause6']
+      .forEach((k) => fetch(`audio/${k}.mp3`).then((r) => r.arrayBuffer()).then((b) => AC.decodeAudioData(b)).then((buf) => { CLIPS[k] = buf; }).catch(() => {}));
+  } catch (e) { AC = null; }
+}
+function noiseBuf(sec) { const b = AC.createBuffer(1, AC.sampleRate * sec, AC.sampleRate); const d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; return b; }
+function clip(k, gain = 1, muffle = false) {
+  if (!AC || !CLIPS[k]) return;
+  const s = AC.createBufferSource(); s.buffer = CLIPS[k];
+  const g = AC.createGain(); g.gain.value = gain;
+  if (muffle) { const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1800; s.connect(f).connect(g); } else s.connect(g);
+  g.connect(master); s.start();
+}
+function knock(n = 3) {
+  if (!AC) return;
+  for (let i = 0; i < n; i++) {
+    const t0 = AC.currentTime + i * 0.55, o = AC.createOscillator(), g = AC.createGain();
+    o.frequency.setValueAtTime(180, t0); o.frequency.exponentialRampToValueAtTime(70, t0 + 0.12);
+    g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.9, t0 + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.35);
+    o.connect(g).connect(master); o.start(t0); o.stop(t0 + 0.4);
+    const ns = AC.createBufferSource(); ns.buffer = noiseBuf(0.1); const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900;
+    const ng = AC.createGain(); ng.gain.setValueAtTime(0.5, t0); ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08);
+    ns.connect(bp).connect(ng).connect(master); ns.start(t0);
+  }
+}
+function tone(f, dur, g0 = 0.15, type = 'sine', at = 0) {
+  if (!AC) return;
+  const t0 = AC.currentTime + at, o = AC.createOscillator(), g = AC.createGain(); o.type = type; o.frequency.value = f;
+  g.gain.setValueAtTime(g0, t0); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g).connect(master); o.start(t0); o.stop(t0 + dur);
+}
+function buzz() { [0, 0.3].forEach((a) => tone(172, 0.22, 0.12, 'square', a)); }
+function ring() { [0, 0.45].forEach((a) => { tone(1300, 0.35, 0.08, 'sine', a); tone(1950, 0.35, 0.04, 'sine', a); }); }
+function shutter() { if (!AC) return; const s = AC.createBufferSource(); s.buffer = noiseBuf(0.1); const g = AC.createGain(); g.gain.setValueAtTime(0.6, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + 0.09); s.connect(g).connect(master); s.start(); tone(140, 0.9, 0.05, 'square', 0.15); }
+
+// ------------------------------------------------------------------ time
+const hhmm = (m) => { const a = START + m, h = Math.floor(a / 60), mm = a % 60; return `${h}:${String(mm).padStart(2, '0')} AM`; };
+function visitor(t = S.t) { return VISITORS.find(([a, b]) => t >= a && t < b) || null; }
+function ringing(t = S.t) { return t >= CALL[0] && t < CALL[1]; }
+function advance(m) {
+  const from = S.t;
+  S.t = Math.min(NIGHT, S.t + m);
+  const news = [];
+  if (from < 0.5 && S.t >= 0) { /* offer arrives at the start */ }
+  if (from < 6 && S.t >= 6 && !S.vms.includes('hi')) { S.vms.push('hi'); buzz(); news.push('Your phone buzzes. A voicemail.'); }
+  if (from < 38 && S.t >= 38 && S.envelope === 'none') { S.envelope = 'there'; news.push('Something slides under the door. Paper on wood.'); }
+  if (from < CALL[1] && S.t >= CALL[1] && !S.vms.includes('pickup')) { S.vms.push('pickup'); news.push('The call stops. A new voicemail.'); }
+  const unread = CHAT.filter(([at]) => at <= S.t).length - S.chatSeen;
+  if (CHAT.some(([at]) => at > from && at <= S.t)) { buzz(); news.push(`Building 3 group chat: ${unread} new.`); }
+  const v = visitor();
+  if (v && (!S.knocked[v[2]] || S.t - S.lastKnock >= 8)) {
+    S.lastKnock = S.t;
+    if (v[2] !== 'ink') { knock(3); news.push(S.knocked[v[2]] ? 'They knock again.' : 'Three knocks at the door.'); }
+    else news.push('Nobody knocks. Something dark is spreading under the door.');
+    if (!S.knocked[v[2]]) { setTimeout(() => clip(v[3], 0.9, true), 1800); news.push(`<span class="say them">“${v[4]}”</span>`); }
+    S.knocked[v[2]] = true;
+  }
+  if (ringing() && !S.callRung) { S.callRung = true; ring(); news.push('Your phone is ringing. Caller: You.'); }
+  else if (ringing()) ring();
+  if (S.t >= NIGHT) { sunrise(); return news; }
+  return news;
+}
+
+// ------------------------------------------------------------------ drawing
+const cv = document.getElementById('cv'), cx = cv.getContext('2d');
+function fit() { const r = cv.getBoundingClientRect(); cv.width = Math.round(r.width * 2); cv.height = Math.round(r.height * 2); draw(); }
+function draw() {
+  const W = cv.width, H = cv.height;
+  if (S && S.view === 'peep') return drawPeep(W, H);
+  if (S && S.view === 'door') return drawDoor(W, H, true);
+  drawRoom(W, H);
+}
+function drawRoom(W, H) {
+  const c = cx, k = W / 900;
+  c.fillStyle = '#0d0e12'; c.fillRect(0, 0, W, H);
+  const floor = H * 0.78;
+  c.fillStyle = '#121418'; c.fillRect(0, floor, W, H - floor);
+  drawDoorShape(W * 0.5, floor, k * 0.75);
+  // radiator, left, under a dark window
+  c.fillStyle = '#16191f'; c.fillRect(W * 0.04, H * 0.18, W * 0.24, H * 0.26);
+  c.fillStyle = '#1d222b'; c.fillRect(W * 0.05, H * 0.19, W * 0.22, H * 0.24);
+  c.fillStyle = '#262a31'; for (let i = 0; i < 9; i++) c.fillRect(W * 0.05 + i * W * 0.024, floor - H * 0.2, W * 0.012, H * 0.17);
+  c.fillStyle = '#2f343c'; c.fillRect(W * 0.04, floor - H * 0.21, W * 0.25, H * 0.012);
+  if (!S.radiator) { c.fillStyle = 'rgba(236,228,210,.5)'; c.fillRect(W * 0.2, floor - H * 0.225, W * 0.05, H * 0.012); }
+  // nightstand with phone
+  c.fillStyle = '#17191e'; c.fillRect(W * 0.72, floor - H * 0.16, W * 0.22, H * 0.16);
+  const unread = CHAT.filter(([at]) => at <= S.t).length > S.chatSeen || S.vms.length > S.vmSeen || ringing() || !S.declined && S.t < 2;
+  const glow = unread ? 0.9 : 0.25;
+  const g = c.createRadialGradient(W * 0.83, floor - H * 0.17, 4, W * 0.83, floor - H * 0.17, W * 0.25);
+  g.addColorStop(0, `rgba(150,190,255,${0.35 * glow})`); g.addColorStop(1, 'rgba(150,190,255,0)');
+  c.fillStyle = g; c.fillRect(W * 0.55, floor - H * 0.45, W * 0.45, H * 0.45);
+  c.fillStyle = `rgba(190,215,255,${0.5 + 0.5 * glow})`; c.fillRect(W * 0.78, floor - H * 0.175, W * 0.1, H * 0.012);
+  // camera
+  c.fillStyle = '#e8e2d4'; c.fillRect(W * 0.76, floor - H * 0.215, W * 0.08, H * 0.035);
+  c.fillStyle = '#222'; c.beginPath(); c.arc(W * 0.8, floor - H * 0.197, W * 0.012, 0, 7); c.fill();
+  // labels (subtle)
+  c.fillStyle = 'rgba(141,145,155,.6)'; c.font = `${22 * k}px "Courier Prime", monospace`; c.textAlign = 'center';
+  c.fillText('radiator', W * 0.16, floor + H * 0.05); c.fillText('door', W * 0.5, floor + H * 0.05); c.fillText('phone', W * 0.83, floor + H * 0.05);
+}
+function drawDoorShape(x, base, k) {
+  const c = cx, w = 340 * k, h = 820 * k, v = visitor();
+  const lit = v && v[2] === 'ink' ? 0.25 : 1;
+  c.fillStyle = '#20232a'; c.fillRect(x - w / 2 - 22 * k, base - h - 22 * k, w + 44 * k, h + 22 * k);
+  c.fillStyle = '#15171c'; c.fillRect(x - w / 2, base - h, w, h - 6 * k);
+  c.strokeStyle = 'rgba(200,220,205,.06)'; c.lineWidth = 3 * k; c.strokeRect(x - w / 2 + 34 * k, base - h + 40 * k, w - 68 * k, h * 0.38); c.strokeRect(x - w / 2 + 34 * k, base - h * 0.5, w - 68 * k, h * 0.42);
+  c.fillStyle = '#2a2e35'; c.beginPath(); c.arc(x + w / 2 - 40 * k, base - h * 0.48, 12 * k, 0, 7); c.fill();
+  // peephole
+  c.fillStyle = `rgba(207,232,200,${0.85 * lit})`; c.beginPath(); c.arc(x, base - h * 0.7, 6 * k, 0, 7); c.fill();
+  // the gap under the door
+  c.fillStyle = `rgba(207,232,200,${0.95 * lit})`; c.fillRect(x - w / 2, base - 6 * k, w, 6 * k);
+  const g = c.createRadialGradient(x, base, 2, x, base, w * 1.1); g.addColorStop(0, `rgba(207,232,200,${0.18 * lit})`); g.addColorStop(1, 'rgba(207,232,200,0)');
+  c.fillStyle = g; c.fillRect(x - w * 1.2, base - 30 * k, w * 2.4, 260 * k);
+  if (v && v[2] !== 'ink') { c.fillStyle = '#050506'; const fw = v[2] === 'lily' ? 28 : 46; c.fillRect(x - 70 * k, base - 6 * k, fw * k, 6 * k); c.fillRect(x + 20 * k, base - 6 * k, fw * k, 6 * k); }
+  if (v && v[2] === 'ink') { c.fillStyle = 'rgba(8,6,10,.95)'; c.beginPath(); c.ellipse(x, base + 30 * k, 220 * k, 60 * k, 0, 0, 7); c.fill(); }
+  if (S.envelope === 'there') { c.save(); c.translate(x - 60 * k, base + 40 * k); c.rotate(-0.08); c.fillStyle = '#e6dcc6'; c.fillRect(0, 0, 150 * k, 90 * k); c.fillStyle = '#a01d22'; c.beginPath(); c.arc(75 * k, 45 * k, 13 * k, 0, 7); c.fill(); c.restore(); }
+}
+function drawDoor(W, H) {
+  cx.fillStyle = '#0d0e12'; cx.fillRect(0, 0, W, H);
+  cx.fillStyle = '#121418'; cx.fillRect(0, H * 0.84, W, H * 0.16);
+  drawDoorShape(W / 2, H * 0.84, W / 900 * 1.25);
+}
+function figure(c, x, base, h, col, kid) {
+  const u = h / 100; c.fillStyle = col;
+  c.beginPath(); c.ellipse(x, base - h + 7 * u, 6 * u, 7 * u, 0, 0, 7); c.fill();
+  c.beginPath(); c.moveTo(x - 12 * u, base - h + 17 * u); c.lineTo(x + 12 * u, base - h + 17 * u); c.lineTo(x + 9 * u, base - h + 40 * u); c.lineTo(x + 12 * u, base - 42 * u); c.lineTo(x - 12 * u, base - 42 * u); c.lineTo(x - 9 * u, base - h + 40 * u); c.fill();
+  c.fillRect(x - 6 * u, base - 42 * u, 5 * u, 42 * u); c.fillRect(x + 1 * u, base - 42 * u, 5 * u, 42 * u);
+}
+function drawPeep(W, H) {
+  const c = cx, r = Math.min(W, H) * 0.44, x0 = W / 2, y0 = H * 0.45, v = visitor();
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  c.save(); c.beginPath(); c.arc(x0, y0, r, 0, 7); c.clip();
+  const flick = v && v[2] === 'ink' ? 0.15 : (Math.random() < 0.06 ? 0.3 : 1);
+  const wall = (a) => `rgb(${14 + 50 * a * flick},${16 + 60 * a * flick},${14 + 48 * a * flick})`;
+  const vy = y0 - r * 0.1;
+  for (let z = 0; z < 14; z++) {    // a corridor, receding
+    const s0 = 1 / (1 + z * 0.35), s1 = 1 / (1 + (z + 1) * 0.35);
+    const xa = r * 1.3 * s0, xb = r * 1.3 * s1, ya = r * 1.1 * s0, yb = r * 1.1 * s1, f = 1 - z / 16;
+    c.fillStyle = wall(0.55 * f); c.beginPath(); c.moveTo(x0 - xa, vy + ya); c.lineTo(x0 + xa, vy + ya); c.lineTo(x0 + xb, vy + yb); c.lineTo(x0 - xb, vy + yb); c.fill();
+    c.fillStyle = wall(0.8 * f); c.beginPath(); c.moveTo(x0 - xa, vy - ya); c.lineTo(x0 - xa, vy + ya); c.lineTo(x0 - xb, vy + yb); c.lineTo(x0 - xb, vy - yb); c.fill();
+    c.fillStyle = wall(0.74 * f); c.beginPath(); c.moveTo(x0 + xa, vy - ya); c.lineTo(x0 + xa, vy + ya); c.lineTo(x0 + xb, vy + yb); c.lineTo(x0 + xb, vy - yb); c.fill();
+    c.fillStyle = wall(0.3 * f); c.beginPath(); c.moveTo(x0 - xa, vy - ya); c.lineTo(x0 + xa, vy - ya); c.lineTo(x0 + xb, vy - yb); c.lineTo(x0 - xb, vy - yb); c.fill();
+    if (z % 2 === 0) { c.fillStyle = `rgba(207,232,200,${0.9 * f * flick})`; c.fillRect(x0 - xa * 0.25, vy - ya * 0.98, xa * 0.5, ya * 0.06); }
+  }
+  c.fillStyle = 'rgba(190,40,30,.9)'; c.fillRect(x0 - r * 0.04, vy - r * 0.05, r * 0.08, r * 0.025);
+  if (v) {
+    const who = v[2];
+    if (who === 'ink') { c.fillStyle = 'rgba(6,5,8,.96)'; c.beginPath(); c.ellipse(x0, y0 + r * 0.7, r * 1.2, r * 0.6, 0, 0, 7); c.fill(); }
+    else figure(c, x0, y0 + r * 0.95, (who === 'lily' ? 0.9 : 1.55) * r, who === 'elise' ? '#c99a2e' : '#030304');
+  }
+  c.restore();
+  const vg = c.createRadialGradient(x0, y0, r * 0.4, x0, y0, r); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.85)');
+  c.fillStyle = vg; c.beginPath(); c.arc(x0, y0, r, 0, 7); c.fill();
+}
+// the Polaroid shows what's really there
+function truthImage(kind, cvs) {
+  const c = cvs.getContext('2d'), W = cvs.width, H = cvs.height;
+  const film = (base) => { c.fillStyle = base; c.fillRect(0, 0, W, H); };
+  if (kind.startsWith('ink')) {
+    film('#e9e1cf');
+    const off = document.createElement('canvas'); off.width = W; off.height = H; const o = off.getContext('2d');
+    o.filter = 'blur(7px)'; o.fillStyle = '#000';
+    let seed = kind.length * 97; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const blobs = kind === 'ink-mouth' ? [[.0, .55, .42, .1], [.2, .38, .1, .07]] : kind === 'ink-mother' ? [[0, .18, .08, .09], [0, .5, .12, .3], [.22, .55, .04, .35]] : [[0, .5, .45, .4]];
+    for (let i = 0; i < 40; i++) { const b = blobs[i % blobs.length], ax = b[0] + (rnd() - .5) * b[2] * 1.4, ay = b[1] + (rnd() - .5) * b[3] * 1.4, s = (0.04 + rnd() * 0.08) * W; [1, -1].forEach((sg) => { o.beginPath(); o.ellipse(W / 2 + sg * ax * W, ay * H, s, s * (0.7 + rnd()), 0, 0, 7); o.fill(); }); }
+    const d = o.getImageData(0, 0, W, H), out = c.getImageData(0, 0, W, H);
+    for (let i = 0; i < d.data.length; i += 4) if (d.data[i + 3] > 110) { out.data[i] = 18; out.data[i + 1] = 16; out.data[i + 2] = 24; }
+    c.putImageData(out, 0, 0);
+    const eyes = kind === 'ink-mouth' ? [[.2, .38, .045]] : kind === 'ink-mother' ? [[.025, .18, .02]] : [[.16, .35, .05], [.3, .6, .04], [0, .5, .06]];
+    eyes.forEach(([ex, ey, es]) => [1, -1].forEach((sg) => { if (ex === 0 && sg < 0) return; c.fillStyle = '#efe8d6'; c.beginPath(); c.ellipse(W / 2 + sg * ex * W, ey * H, es * W, es * W * 0.6, 0, 0, 7); c.fill(); c.fillStyle = '#0c0b10'; c.beginPath(); c.arc(W / 2 + sg * ex * W, ey * H, es * W * 0.35, 0, 7); c.fill(); }));
+  } else if (kind === 'elise' || kind === 'elise-smile') {
+    film(kind === 'elise' ? '#c9d6d2' : '#d8c8a8');
+    c.fillStyle = 'rgba(255,240,210,.5)'; c.fillRect(0, 0, W, H * 0.5);
+    figure(c, W / 2, H * 1.15, H * 1.25, '#e2b234');
+    c.fillStyle = '#d6aa8c'; c.beginPath(); c.ellipse(W / 2, H * 1.15 - H * 1.25 + H * 0.087, H * 0.065, H * 0.08, 0, 0, 7); c.fill();
+    c.fillStyle = '#3e2a22'; c.beginPath(); c.ellipse(W / 2, H * 1.15 - H * 1.25 + H * 0.06, H * 0.08, H * 0.06, 0, Math.PI, 0); c.fill();
+  } else if (kind === 'figure') {
+    film('#b9c9bf'); figure(c, W / 2, H * 1.1, H * 1.2, '#0b0b0d');
+    c.fillStyle = '#ff9a3d'; c.beginPath(); c.arc(W / 2, H * 0.55, W * 0.03, 0, 7); c.fill();
+  } else { film('#b9c9bf'); c.fillStyle = 'rgba(0,0,0,.2)'; c.fillRect(W * 0.35, H * 0.3, W * 0.3, H * 0.5); }
+  // instant-film finish
+  const g = c.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, W * 0.75); g.addColorStop(0, 'rgba(255,200,140,.05)'); g.addColorStop(1, 'rgba(40,30,20,.35)');
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+}
+function showPhoto(kind, caption, neat = false) {
+  const p = document.getElementById('photo');
+  p.innerHTML = `<div class="polaroid"><canvas width="420" height="420"></canvas><p class="${neat ? 'neat' : ''}"></p></div><button id="photoOk">Put it down</button>`;
+  p.hidden = false;
+  const c = p.querySelector('canvas'), cap = p.querySelector('p');
+  truthImage(kind, c);
+  c.style.filter = 'grayscale(1) brightness(.35) sepia(.4)'; c.style.transition = 'filter 4.5s ease-in';
+  requestAnimationFrame(() => requestAnimationFrame(() => { c.style.filter = 'none'; }));
+  setTimeout(() => { cap.textContent = caption; }, 3800);
+  document.getElementById('photoOk').onclick = () => { p.hidden = true; render(); };
+}
+
+// ------------------------------------------------------------------ views
+const $ = (id) => document.getElementById(id);
+function say(html) { $('words').innerHTML = html; }
+function actions(list) {
+  const a = $('actions'); a.innerHTML = '';
+  list.forEach(([label, fn, cls, cost]) => {
+    const b = document.createElement('button'); b.innerHTML = label + (cost ? `<span class="cost">${cost}m</span>` : ''); if (cls) b.className = cls;
+    b.onclick = () => { if (S.ending) return; fn(); }; a.appendChild(b);
+  });
+}
+function hud() { $('clock').textContent = hhmm(S.t); $('film').textContent = `film ${S.film}`; }
+function act(minutes, fn) { const news = advance(minutes); if (S.ending) return; fn && fn(); render(news); }
+function render(news = []) {
+  hud(); draw();
+  if (S.ending) return;
+  if (ringing() && S.view !== 'phone') news = news.length ? news : ['Your phone is still ringing. Caller: You.'];
+  const v = visitor();
+  if (S.view === 'room') {
+    say(news.length ? news.join(' ') : roomLine(v));
+    actions([
+      ['Go to the door', () => { S.view = 'door'; act(1); }],
+      ['Check your phone', () => openPhone()],
+      ['Search the radiator', () => act(8, () => { S.radiator = true; showPhoto('elise-smile', 'THIS IS ELISE. SHE IS YOUR DAUGHTER.', true); say('Wedged behind the radiator: a Polaroid. On the back, in shaky marker: <i>M. — Rm 307.</i> Someone lived here before you.'); }), '', 8],
+      ['Wait', () => act(15), '', 15],
+    ].filter((x) => !(x[0].startsWith('Search') && S.radiator)));
+  } else if (S.view === 'door' || S.view === 'peep') {
+    const lines = news.length ? news.join(' ') : v ? (v[2] === 'ink' ? 'No knock. Ink is coming under the door, slow as breath.' : 'Someone is standing on the other side. You can see their feet in the light.') : 'The hallway light hums under the door.';
+    say(lines + (S.view === 'peep' ? ' <span class="say">You look through the peephole.</span>' : ''));
+    const L = [
+      ['Look through the peephole', () => { S.view = 'peep'; act(3, () => { const vv = visitor(); if (vv) clip(vv[3], 0.8, true); }); }, '', 3],
+      [`Take a photo through it (${S.film})`, () => photo(), '', 5],
+      ['Open the door', () => openDoor(), 'danger'],
+      ['Say “Who is it?”', () => speak(), 'danger'],
+      ['Step back', () => { S.view = 'room'; act(1); }],
+    ];
+    if (S.envelope === 'there') L.unshift(['Pick up the envelope', () => { S.envelope = 'held'; act(1, () => openContract()); }]);
+    if (S.envelope === 'held') L.unshift(['Read the contract again', () => openContract()]);
+    if (S.film <= 0) L.splice(L.findIndex((x) => x[0].startsWith('Take')), 1);
+    actions(L);
+  }
+}
+function roomLine(v) {
+  if (S.t === 0) return 'You wake up. 3:07 AM. Your phone is lit on the nightstand.';
+  if (v) return v[2] === 'ink' ? 'The light under the door is going out.' : 'There is someone at your door. You can see the light under it break around their feet.';
+  return 'Apartment 307. The radiator ticks. The light under the door hums.';
+}
+function photo() {
+  if (S.film <= 0) return;
+  S.film -= 1; shutter();
+  const v = visitor(), key = v ? v[2] : 'none';
+  act(5, () => showPhoto(TRUTH[key][1], TRUTH[key][0]));
+}
+function openDoor() {
+  const v = visitor();
+  if (!v) { act(2, () => { say('You open it a crack. The hallway is empty. Every door on the floor is closed. You shut yours again, quietly.'); }); return; }
+  if (v[2] === 'elise') {
+    if (S.radiator && !S.helped) { S.helped = true; act(4, () => { clip('byemom', 0.9); say('A girl in a yellow coat, maybe sixteen. She stares at the Polaroid in your hand. “That’s my mom’s. She lived here.” She takes it gently. “Don’t answer at 5:15.” Then she is gone down the hall.'); }); }
+    else act(3, () => { say('A girl in a yellow coat. “Sorry. My mom used to live in 307.” She looks past you into the dark, then leaves. She was real. You are almost sure.'); });
+    return;
+  }
+  end('outside');
+}
+function speak() {
+  const v = visitor();
+  if (!v) { act(1, () => say('“Who is it?” Your voice sounds too loud. Nobody answers. Good.')); return; }
+  if (v[2] === 'elise') { act(1, () => say('“It’s Elise. Is my mom there? She used to live in 307.”')); return; }
+  end('heard');
+}
+
+// phone
+function openPhone() {
+  advance(1); if (S.ending) return;
+  S.view = 'phone'; hud(); draw();
+  const p = $('phone'); p.hidden = false;
+  if (ringing()) return callScreen();
+  const unreadChat = CHAT.filter(([at]) => at <= S.t).length - S.chatSeen, unreadVm = S.vms.length - S.vmSeen;
+  p.innerHTML = `<h2>${hhmm(S.t)}</h2>
+    <div class="apps">
+      <button class="app" id="aS"><b>The Stillness${S.declined ? '' : '<span class="badge">1</span>'}</b><small>${S.declined ? 'Offer declined' : 'Accept or decline by sunrise'}</small></button>
+      <button class="app" id="aV"><b>Voicemail${unreadVm > 0 ? `<span class="badge">${unreadVm}</span>` : ''}</b><small>${S.vms.length ? 'from You' : 'No messages'}</small></button>
+      <button class="app" id="aC"><b>Building 3${unreadChat > 0 ? `<span class="badge">${unreadChat}</span>` : ''}</b><small>41 members</small></button>
+      <button class="app" id="aX"><b>Put it down</b><small>back to the room</small></button>
+    </div>`;
+  say('The screen is too bright in the dark.');
+  actions([['Put the phone down', closePhone]]);
+  $('aS').onclick = stillnessApp; $('aV').onclick = voicemailApp; $('aC').onclick = chatApp; $('aX').onclick = closePhone;
+}
+function closePhone() { $('phone').hidden = true; S.view = 'room'; render(); }
+function stillnessApp() {
+  const p = $('phone');
+  p.innerHTML = `<h2>The Stillness</h2>
+    <p style="font-family:var(--serif);font-size:24px;margin:0 0 10px">You have been offered the Stillness.</p>
+    <p class="terms">1.1 Freeze time, and everything in it, except yourself.<br>2.1 This offer is not exclusive.<br>3.1 This offer expires at sunrise.<br>3.2 Silence is taken as refusal.<br>3.3 Any reply to the Counterparty, by voice or by touch, is taken as acceptance.<br>3.4 A refusal made in this app is not a reply.</p>
+    ${S.declined ? '<p style="color:var(--ice)">Offer declined.</p>' : '<div class="row"><button class="danger" id="acc">Accept</button><button class="safe" id="dec">Decline</button><button id="bk">Back</button></div>'}`;
+  if (!S.declined) {
+    $('acc').onclick = () => end('holder');
+    $('dec').onclick = () => { S.declined = true; act(1, () => { stillnessApp(); say('Offer declined. Somewhere in the walls, something stops listening to you.'); actions([['Put the phone down', closePhone]]); }); };
+    $('bk').onclick = openPhone;
+  } else setTimeout(() => { const b = document.createElement('button'); b.textContent = 'Back'; b.onclick = openPhone; p.appendChild(b); }, 0);
+}
+function voicemailApp() {
+  const p = $('phone');
+  S.vmSeen = S.vms.length;
+  const meta = { hi: ['You', 'Received: Tomorrow, 3:14 AM', ['hi', 'dontopen']], pickup: ['You', 'Received: just now', ['pickup']] };
+  p.innerHTML = `<h2>Voicemail</h2>${S.vms.length ? S.vms.map((k) => `<div class="vm"><span>${meta[k][0]}<small>${meta[k][1]}</small></span><button data-k="${k}">Play</button></div>`).join('') : '<p style="color:var(--dim)">No messages.</p>'}<div class="row"><button id="bk">Back</button></div>`;
+  p.querySelectorAll('[data-k]').forEach((b) => b.onclick = () => { const k = b.dataset.k; meta[k][2].forEach((c, i) => setTimeout(() => clip(c, 1), i * 2300)); act(2, () => { voicemailApp(); say(k === 'hi' ? '<span class="say">“Hi. It’s me.” … “Don’t open the door.”</span>' : '<span class="say">“Pick up.”</span>'); actions([['Put the phone down', closePhone]]); }); });
+  $('bk').onclick = openPhone;
+}
+function chatApp() {
+  const p = $('phone');
+  const shown = CHAT.filter(([at]) => at <= S.t);
+  S.chatSeen = shown.length;
+  p.innerHTML = `<h2>Building 3 · 41 members</h2>${shown.map(([, n, a, txt]) => n ? `<div class="msg ${n === 'Lily' ? 'lily' : ''}"><i>${n} · ${a}</i>${txt}</div>` : `<div class="msg sys">${txt}</div>`).join('') || '<p style="color:var(--dim)">Nothing yet.</p>'}<div class="row"><button id="bk">Back</button></div>`;
+  $('bk').onclick = openPhone;
+  advance(2); hud();
+}
+function callScreen() {
+  const p = $('phone');
+  p.innerHTML = `<h2>Incoming call</h2><p style="font-family:var(--serif);font-size:44px;margin:30px 0 4px;text-align:center">You</p><p style="text-align:center;color:var(--dim)">mobile · calling…</p>
+    <div class="row" style="justify-content:center;margin-top:40px"><button class="danger" id="dec">Decline</button><button class="danger" id="ans">Answer</button></div>`;
+  say('Your own name on the screen. It keeps ringing.');
+  actions([['Let it ring', () => { $('phone').hidden = true; S.view = 'room'; act(3); }, 'safe', 3]]);
+  $('ans').onclick = () => { clip('thankyou', 1); end('answered'); };
+  $('dec').onclick = () => { clip('thankyou', 1); end('answered', 'You touched it. Any reply, by voice or by touch. “Thank you,” it says, in your voice.'); };
+}
+
+// contract
+function openContract() {
+  const p = $('contract'); p.hidden = false; S.view = 'contract';
+  p.innerHTML = `<h3>COUNTERSIGNED</h3><div style="font-size:11px;letter-spacing:.15em">BUILDING 3 · APT 307 · 3:07 AM</div>
+    <div class="cl"><b>CLAUSE 1 — THE STILLNESS</b>The Holder may stop the world. Consideration: <em>one (1) of the Holder, nightly.</em></div>
+    <div class="cl"><b>CLAUSE 2 — COMPANY</b>Someone will always be at your door, in <em>a voice you trust.</em></div>
+    <div class="cl"><b>CLAUSE 3 — FULL DISCLOSURE</b>You may read every clause. You may <em>not look away.</em></div>
+    <div class="cl"><b>CLAUSE 4 — REST</b>A substitute will knock in her place, <em>nightly, at 3:07 AM.</em></div>
+    <div class="cl"><b>CLAUSE 5 — RELIEF</b>You will not remember. Witness: <em>E. (age 7).</em></div>
+    <div style="height:240px"></div>
+    <div class="cl" id="c6"><b>CLAUSE 6 — THE VIEWER</b>Anyone who reads this far has read the terms. <em>Silence is taken as acceptance.</em> Effective: 3:07 AM, tonight.</div>
+    <div class="sigline"><span>SIGNATURE</span><span>COUNTERSIGNED 3:07 AM</span></div>
+    <div class="row"><button class="danger" id="sign">Sign</button><button id="put">Put it down</button></div>`;
+  say('Heavy paper. Typed. Your apartment number is already on it.');
+  actions([['Put it down', closeContract]]);
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !S.read6) { S.read6 = true; clip('clause6', 1); say('<span class="say them">“Anyone who watches to the end has read the terms. And silence is taken as acceptance.”</span>'); } }), { root: p, threshold: 0.9 });
+  io.observe($('c6'));
+  $('sign').onclick = () => end('signed');
+  $('put').onclick = closeContract;
+}
+function closeContract() { $('contract').hidden = true; S.view = 'door'; render(); }
+
+// ------------------------------------------------------------------ endings
+function sunrise() {
+  if (S.read6 && !S.declined) return end('silent');
+  end(S.helped ? 'visiting' : 'sunrise');
+}
+function end(key, override) {
+  S.ending = key;
+  const found = load(); if (!found.includes(key)) { found.push(key); save(found); }
+  ['phone', 'contract', 'photo'].forEach((id) => { $(id).hidden = true; });
+  if (key === 'holder') clip('ninety9', 1); else if (key === 'outside') clip('letmein', 1); else if (key === 'heard') clip('openmarta', 1);
+  else if (key === 'signed') clip('onemore', 1); else if (key === 'silent') clip('seeyou', 1); else if (key === 'visiting') clip('byemom', 1);
+  if (AC) droneG.gain.linearRampToValueAtTime(key === 'sunrise' || key === 'visiting' ? 0.05 : 0.5, AC.currentTime + 2);
+  const [name, text] = ENDINGS[key];
+  const e = $('end'); e.hidden = false;
+  e.innerHTML = `<div class="small">${hhmm(S.t)} · ending ${Object.keys(ENDINGS).indexOf(key) + 1} of 8</div><h1>${name}</h1><p>${override || text}</p>
+    <div class="found">${Object.entries(ENDINGS).map(([k, [n]]) => `<span class="${found.includes(k) ? 'got' : ''}">${found.includes(k) ? n : '?'}</span>`).join('')}</div>
+    <div class="row" style="justify-content:center"><button id="again" style="border-color:var(--amber);color:var(--amber)">Wake up again</button></div>
+    <div class="small">The Stillness · Developing · Countersigned</div>`;
+  say(''); $('actions').innerHTML = '';
+  $('again').onclick = () => { $('end').hidden = true; S = fresh(); S.view = 'room'; render(['You wake up. 3:07 AM. Again.']); };
+}
+function titleFound() { const f = load(); $('foundTitle').innerHTML = Object.entries(ENDINGS).map(([k, [n]]) => `<span class="${f.includes(k) ? 'got' : ''}">${f.includes(k) ? n : '?'}</span>`).join(''); }
+
+// ------------------------------------------------------------------ boot
+function start(data) {
+  S = (data && data.S) || fresh();
+  titleFound(); fit();
+  window.addEventListener('resize', fit);
+  cv.addEventListener('click', (ev) => {
+    if (!S || S.ending || $('title').hidden === false || S.view !== 'room') return;
+    const r = cv.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width;
+    if (x < 0.32) { if (!S.radiator) act(8, () => { S.radiator = true; showPhoto('elise-smile', 'THIS IS ELISE. SHE IS YOUR DAUGHTER.', true); }); }
+    else if (x < 0.66) { S.view = 'door'; act(1); }
+    else openPhone();
+  });
+  setInterval(() => { if (S && S.view === 'peep' && !S.ending) draw(); }, 140);
+  $('startBtn').onclick = () => { audioStart(); $('title').hidden = true; S.view = 'room'; buzz(); render(['You wake up. 3:07 AM. Your phone lights up on the nightstand: The Stillness — “You have been offered the Stillness. Accept or decline by sunrise.”']); };
+  if (data && data.S && !data.S.ending) { $('title').hidden = true; render(); }
+}
+window.claude?.hot?.snapshot?.(() => ({ S }));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+</script>
