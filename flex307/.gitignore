@@ -1,0 +1,5 @@
+out/
+audio/stems/
+__pycache__/
+# the photo and everything cut from it stay local: put the source at assets/source.jpg
+assets/
