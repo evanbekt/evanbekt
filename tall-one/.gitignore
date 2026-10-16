@@ -1,0 +1,5 @@
+out/
+audio/stems/
+__pycache__/
+# his photos stay local: put them in assets/ (see src/story.py for the names)
+assets/
