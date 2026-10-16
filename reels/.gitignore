@@ -1,0 +1,6 @@
+*/out/
+*/stems/
+__pycache__/
+pids.txt
+# a link to ../tall-one/assets (his photos, kept local)
+assets
