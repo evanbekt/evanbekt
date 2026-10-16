@@ -156,7 +156,11 @@ const CLIPS = {};
 function audioStart() {
   if (AC) return;
   try {
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* older browsers */ }   // iPhone: play even with the silent switch on
     AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state !== 'running') AC.resume();
+    // phones and tabs suspend audio; wake it on every tap
+    document.addEventListener('pointerdown', () => { if (AC && AC.state !== 'running') AC.resume(); });
     master = AC.createGain(); master.gain.value = 0.9; master.connect(AC.destination);
     // the room: a low drone and air
     droneG = AC.createGain(); droneG.gain.value = 0.0; droneG.connect(master);
@@ -164,7 +168,9 @@ function audioStart() {
     const n = noiseBuf(4), src = AC.createBufferSource(); src.buffer = n; src.loop = true;
     const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 500; const ng = AC.createGain(); ng.gain.value = 0.05;
     src.connect(lp).connect(ng).connect(droneG); src.start();
-    droneG.gain.linearRampToValueAtTime(0.35, AC.currentTime + 3);
+    // a fluorescent hum phone speakers can actually play
+    [120, 240].forEach((f, i) => { const o = AC.createOscillator(); o.frequency.value = f; const g = AC.createGain(); g.gain.value = [0.05, 0.025][i]; o.connect(g).connect(droneG); o.start(); });
+    droneG.gain.setValueAtTime(0, AC.currentTime); droneG.gain.linearRampToValueAtTime(0.35, AC.currentTime + 3);
     ['hi', 'dontopen', 'opened', 'letmein', 'momitsme', 'byemom', 'mommy', 'openmarta', 'seeyou', 'ninety9', 'onemore', 'thankyou', 'pickup', 'operator', 'clause6']
       .forEach((k) => fetch(`audio/${k}.mp3`).then((r) => r.arrayBuffer()).then((b) => AC.decodeAudioData(b)).then((buf) => { CLIPS[k] = buf; }).catch(() => {}));
   } catch (e) { AC = null; }
